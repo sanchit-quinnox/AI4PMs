@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: nexus-demo
+    env: static
+    buildCommand: cd demo && npm install && npm run build
+    staticPublishPath: ./demo/dist
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex
+
