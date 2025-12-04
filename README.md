@@ -26,6 +26,10 @@ Nexus/
 └── README.md           # This file
 ```
 
+## Live Demo
+
+🚀 **[View Live Demo](https://your-app.onrender.com)** (Deploy to see it live!)
+
 ## Quick Start
 
 ### 1. Read the Vision Document
@@ -99,6 +103,34 @@ Product Managers who:
 - Work with multiple engineering teams
 - Need to context-switch between strategic and tactical work
 - Value speed and accuracy in planning
+
+## Deployment
+
+### Deploy to Render
+
+This project is configured for easy deployment on Render:
+
+1. Go to [Render Dashboard](https://dashboard.render.com/)
+2. Click "New" → "Blueprint"
+3. Connect your GitHub repository: `sanchit-quinnox/AI4PMs`
+4. Render will automatically detect the `render.yaml` configuration
+5. Click "Apply" to deploy
+
+The app will be built and deployed automatically. Render will:
+- Run `npm install` in the demo directory
+- Build the React app with `npm run build`
+- Serve the static files from `demo/dist`
+
+### Manual Deployment (Alternative)
+
+If you prefer manual setup:
+
+1. Create a new Static Site on Render
+2. Connect your repository
+3. Set build settings:
+   - **Build Command**: `cd demo && npm install && npm run build`
+   - **Publish Directory**: `demo/dist`
+4. Deploy!
 
 ## Next Steps
 
