@@ -55,7 +55,7 @@ A living view of strategic progress grounded in execution reality.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
-│  PayFlow Q4 2024 OKRs                                    Last sync: 2m ago     │
+│  PayFlow Q1 2025 OKRs                                    Last sync: 2m ago     │
 ├────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                │
 │  ╔═══════════════════════════════════════════════════════════════════════╗    │
@@ -457,12 +457,13 @@ Planning isn't a separate mode - it's a natural extension of the conversation. W
 
 ## System Architecture
 
+### Production Architecture (Vision)
+
 ```mermaid
 flowchart TB
     subgraph UserInterface["User Interface"]
         Dashboard["OKR Progress Dashboard"]
-        Chat["Chat Interface"]
-        Planner["Planning Workspace"]
+        Chat["Unified Chat + Planning"]
     end
 
     subgraph AgentLayer["Agent Orchestration Layer"]
@@ -499,7 +500,6 @@ flowchart TB
 
     Dashboard --> Agent
     Chat --> Agent
-    Planner --> Agent
 
     Agent --> Skills
     Skills --> MCPLayer
@@ -515,104 +515,170 @@ flowchart TB
     IndexerSkill --> VectorDB
 ```
 
+### Demo Architecture (Current Implementation)
+
+```mermaid
+flowchart LR
+    subgraph Frontend["React Frontend (Demo)"]
+        subgraph Pages["Pages"]
+            DashboardPage["Dashboard Page"]
+            ChatPage["Chat Page"]
+        end
+        
+        subgraph Components["Components"]
+            DashComponents["Dashboard Components<br/>(OKR Cards, Charts, Alerts)"]
+            ChatComponents["Chat Components<br/>(Messages, Epics, Actions)"]
+        end
+        
+        subgraph Data["Mock Data Layer"]
+            MockData["mockData.js<br/>(Objectives, Tickets,<br/>Conversations)"]
+        end
+    end
+    
+    DashboardPage --> DashComponents
+    DashboardPage --> MockData
+    ChatPage --> ChatComponents
+    ChatPage --> MockData
+    
+    style MockData fill:#f9f,stroke:#333,stroke-width:2px
+    style Frontend fill:#e1f5ff,stroke:#333,stroke-width:2px
+```
+
+The demo is a fully client-side React application that simulates the AI capabilities with pre-scripted responses and realistic mock data. It demonstrates the UX and interactions without requiring backend infrastructure.
+
 ---
 
 ## User Flows
 
-### Flow 1: Project Setup and Indexing
+### Flow 1: Dashboard Interaction (Demo Implementation)
 
 ```mermaid
 sequenceDiagram
     actor PM as Product Manager
-    participant UI as Web App
-    participant Agent as AI Agent
-    participant MCP as MCP Servers
-    participant Store as Data Store
+    participant UI as Dashboard Page
+    participant Components as Dashboard Components
+    participant Data as Mock Data Layer
 
-    PM->>UI: Create new project workspace
-    PM->>UI: Connect Jira (OAuth)
-    UI->>MCP: Authenticate with Jira
-    MCP-->>UI: Connection established
+    PM->>UI: Navigate to Dashboard
+    UI->>Data: Load objectives and tickets
+    Data-->>UI: Return OKRs with progress data
     
-    PM->>UI: Upload OKR documents
-    UI->>Agent: Parse and extract OKRs
-    Agent->>Store: Store OKRs + embeddings
+    UI->>Components: Render summary metrics
+    Components->>Data: Calculate overall progress
+    Data-->>Components: Return aggregated stats
     
-    PM->>UI: Add repository URLs
-    UI->>Agent: Index codebase
-    Agent->>MCP: Clone and analyze repos
-    Agent->>Store: Store code index + embeddings
+    UI->>Components: Render OKR cards
+    Components->>Data: Get KR details
+    Data-->>Components: Return KR with ticket stats
     
-    Agent->>Agent: Auto-map tickets to OKRs
-    Agent->>Store: Store mappings
-    Agent-->>UI: Setup complete
-    UI-->>PM: Dashboard ready
+    UI->>Components: Render charts (status, velocity)
+    Components->>Data: Get distribution data
+    Data-->>Components: Return chart data
+    
+    PM->>Components: Expand KR card
+    Components->>Components: Toggle expanded state
+    Components-->>PM: Show ticket breakdown
+    
+    Note over PM,Data: All data is pre-loaded mock data,<br/>simulating real-time calculations
 ```
 
-### Flow 2: Feasibility Check via Chat
+### Flow 2: Chat Interaction (Demo Implementation)
 
 ```mermaid
 sequenceDiagram
     actor PM as Product Manager
-    participant Chat as Chat Interface
-    participant Agent as AI Agent
-    participant Code as Codebase MCP
-    participant Jira as Jira MCP
-    participant Vector as Vector Store
+    participant UI as Chat Page
+    participant Components as Chat Components
+    participant Data as Mock Data Layer
 
-    PM->>Chat: "Can we add dark mode?"
-    Chat->>Agent: Process query
+    PM->>UI: Navigate to Chat
+    UI->>Data: Load pre-loaded conversation
+    Data-->>UI: Return chat history
     
-    Agent->>Vector: Semantic search: theming, styles
-    Vector-->>Agent: Relevant code chunks
+    UI->>Components: Render messages
+    Components-->>PM: Display conversation
     
-    Agent->>Code: Analyze component structure
-    Code-->>Agent: Components found, no theme system
+    PM->>UI: Type and send message
+    UI->>UI: Add user message to state
+    UI->>Components: Show typing indicator
     
-    Agent->>Jira: Search related past tickets
-    Jira-->>Agent: No prior theming work
+    UI->>Data: Match query to demo responses
+    Data-->>UI: Return pre-scripted AI response
     
-    Agent->>Agent: Synthesize feasibility assessment
-    Agent-->>Chat: Structured response with estimate
-    Chat-->>PM: Display analysis + recommendations
-```
-
-### Flow 3: Interactive Planning Session
-
-```mermaid
-sequenceDiagram
-    actor PM as Product Manager
-    participant UI as Planning Workspace
-    participant Agent as AI Agent
-    participant Code as Codebase MCP
-    participant Store as Data Store
-
-    PM->>UI: "Plan SSO support for enterprise"
-    UI->>Agent: Initialize planning session
-    
-    loop Clarification Loop
-        Agent->>Agent: Identify knowledge gaps
-        Agent-->>UI: Ask clarifying question
-        UI-->>PM: Display question with options
-        PM->>UI: Provide answer
-        UI->>Agent: User response
+    alt Feasibility Query
+        UI->>Components: Render feasibility analysis
+        Components-->>PM: Show affected components & estimates
+    else Status Query
+        UI->>Components: Render status breakdown
+        Components-->>PM: Show blockers & progress
+    else Planning Request
+        UI->>Components: Enter planning mode
+        Components->>Components: Show planning badge
+        Components-->>PM: Ask clarifying questions
+        PM->>UI: Respond to questions
+        UI->>Components: Generate epic card
+        Components-->>PM: Display epic with stories
     end
     
-    Agent->>Code: Analyze auth system structure
-    Code-->>Agent: Current auth implementation
+    Note over PM,Data: Responses are pre-scripted but<br/>simulate real AI behavior
+```
+
+### Flow 3: Planning Mode (Demo Implementation)
+
+```mermaid
+sequenceDiagram
+    actor PM as Product Manager
+    participant UI as Chat Page
+    participant Components as Chat Components
+    participant Data as Mock Data Layer
+
+    PM->>UI: Type "Let's plan [feature]"
+    UI->>UI: Detect planning intent
+    UI->>Components: Show planning mode badge
+    Components-->>PM: Display status: "Gathering requirements"
     
-    Agent->>Agent: Generate epic structure
-    Agent-->>UI: Proposed Epic with Stories/Tasks
-    UI-->>PM: Display structured breakdown
+    loop Clarification Questions
+        UI->>Data: Get next question
+        Data-->>UI: Return question with context
+        UI->>Components: Render question card
+        Components-->>PM: Show question
+        
+        PM->>UI: Answer question (text input)
+        UI->>UI: Store answer
+        UI->>Components: Update planning status
+    end
     
-    PM->>UI: Approve and export
-    UI->>Store: Save ticket definitions
-    UI-->>PM: Ready for Jira export
+    UI->>Components: Update status: "Generating"
+    UI->>Data: Get epic structure
+    Data-->>UI: Return epic with stories
+    
+    UI->>Components: Render epic card
+    Components-->>PM: Display expandable epic
+    Components->>Components: Show action buttons
+    
+    alt Split Story
+        PM->>UI: Request story split
+        UI->>Data: Get split stories
+        Data-->>UI: Return refined structure
+        UI->>Components: Update epic card
+    else Export to Jira
+        PM->>UI: Click export button
+        UI->>Components: Simulate Jira export
+        Components->>Components: Show success animation
+        Components-->>PM: Display ticket IDs
+    else Refine
+        PM->>UI: Request refinement
+        UI->>Components: Show refinement dialog
+    end
+    
+    Note over PM,Data: Planning flow is conversational<br/>with natural language refinement
 ```
 
 ---
 
 ## Data Flow Overview
+
+### Production Data Flow (Vision)
 
 ```mermaid
 flowchart LR
@@ -652,11 +718,48 @@ flowchart LR
     Reason --> TicketsOut
 ```
 
+### Demo Data Flow (Current Implementation)
+
+```mermaid
+flowchart LR
+    subgraph MockData["Mock Data (mockData.js)"]
+        Objectives["3 Objectives<br/>8 Key Results"]
+        Tickets["40+ Tickets<br/>with Stats"]
+        Conversations["Pre-scripted<br/>Chat Responses"]
+        Metrics["Velocity Data<br/>Risk Alerts"]
+    end
+
+    subgraph UI["React UI"]
+        Dashboard["Dashboard<br/>Components"]
+        Chat["Chat<br/>Components"]
+    end
+
+    subgraph Display["User Display"]
+        DashView["OKR Progress<br/>Charts & Alerts"]
+        ChatView["Conversational<br/>AI Responses"]
+    end
+
+    Objectives --> Dashboard
+    Tickets --> Dashboard
+    Metrics --> Dashboard
+    
+    Conversations --> Chat
+    Objectives --> Chat
+    Tickets --> Chat
+    
+    Dashboard --> DashView
+    Chat --> ChatView
+    
+    style MockData fill:#ffe1ff,stroke:#333,stroke-width:2px
+```
+
 ---
 
 ## Technical Foundation
 
-The system integrates three types of intelligence:
+### Production System (Vision)
+
+The production system integrates three types of intelligence:
 
 **1. Document Understanding**
 
@@ -672,17 +775,120 @@ Jira (and similar tools) provide the real-time state of work. The AI maintains m
 
 These three layers are unified through a conversational agent that can reason across all contexts simultaneously.
 
+### Demo Implementation (Current)
+
+The demo simulates this intelligence layer with:
+
+**1. Realistic Mock Data** (`src/data/mockData.js`)
+- 3 objectives with 8 key results for Q1 2025
+- 40+ tickets with realistic stats (done, in-progress, blocked, not started)
+- Sprint velocity trends and risk alerts
+- Pre-scripted chat conversations demonstrating key interactions
+
+**2. Smart Response Matching**
+- Pattern matching on user queries to detect intent
+- Different response types: feasibility, status, planning
+- Context-aware responses that reference actual mock data
+- Planning mode that transitions naturally from conversation
+
+**3. Interactive UI Components**
+- Expandable OKR cards with drill-down capabilities
+- Real-time chart updates using Recharts
+- Chat messages with rich formatting (code blocks, epic cards, action buttons)
+- Planning mode with status badges and question cards
+- Export simulation with success confirmations
+
+The demo provides a high-fidelity simulation of the AI experience without requiring backend infrastructure, making it perfect for demonstrations and user testing.
+
 ---
 
 ## Interactive Demo
 
-A working demo application has been built to showcase these concepts in action. The demo includes:
+A fully working demo application has been built to showcase these concepts in action. The demo is a modern, responsive React application with a polished UI that simulates the complete Nexus experience.
 
-- **Live Dashboard**: Interactive OKR progress tracking with charts and visualizations
-- **Chat Interface**: Conversational UI with pre-loaded example queries
-- **Planning Mode**: Step-by-step feature breakdown with AI-guided questions
+### What's Included
 
-**To run the demo:**
+**1. OKR Dashboard**
+- Real-time progress tracking for 3 objectives and 8 key results
+- Interactive summary metrics showing overall progress, at-risk items, and blockers
+- Visual analytics with status distribution pie charts and sprint velocity trends
+- Expandable key result cards with ticket breakdowns and risk indicators
+- Risk alerts panel highlighting blocked tickets and at-risk objectives
+- 40+ mock tickets across multiple epics with realistic data
+
+**2. Unified Chat Interface**
+- Conversational UI with natural language interaction
+- Pre-loaded example conversations demonstrating:
+  - Feasibility analysis (e.g., "Can we add multi-currency support?")
+  - Status queries (e.g., "What's blocking the SSO work?")
+  - Interactive planning mode with AI-guided questions
+- Code-aware responses showing affected components and effort estimates
+- Inline epic generation with expandable story cards
+- Action buttons for exporting to Jira, refining plans, and linking to OKRs
+- Export confirmation UI with ticket links
+- Planning mode indicators with status badges
+- Smart response system that reacts to different types of queries
+
+**3. Modern UI/UX**
+- Dark theme with gradient accents and smooth transitions
+- Responsive design that works on desktop and mobile
+- Sidebar navigation with project context and connected sources
+- Real-time sync status indicator
+- Loading states and typing indicators for realistic AI interaction
+- Syntax-highlighted code blocks in chat responses
+- Interactive charts using Recharts library
+
+### Technical Implementation
+
+**Architecture:**
+```
+demo/
+├── src/
+│   ├── components/
+│   │   ├── Dashboard/
+│   │   │   ├── OKRCard.jsx          # Expandable objective/KR cards
+│   │   │   ├── StatusChart.jsx      # Pie chart for ticket distribution
+│   │   │   ├── VelocityTrend.jsx    # Sprint velocity line chart
+│   │   │   ├── RiskAlerts.jsx       # Blocked tickets & risks panel
+│   │   │   └── ProgressRing.jsx     # Circular progress indicator
+│   │   ├── Chat/
+│   │   │   ├── ChatWindow.jsx       # Main chat container
+│   │   │   ├── Message.jsx          # Message renderer (handles all types)
+│   │   │   ├── EpicCard.jsx         # Inline epic/story display
+│   │   │   ├── ActionButtons.jsx    # Export, Refine, Link actions
+│   │   │   ├── ExportResult.jsx     # Jira export confirmation
+│   │   │   └── CodeBlock.jsx        # Syntax highlighted code
+│   │   └── Planning/                # Planning mode components
+│   ├── pages/
+│   │   ├── DashboardPage.jsx        # Dashboard view
+│   │   └── ChatPage.jsx             # Chat + Planning view
+│   ├── data/
+│   │   └── mockData.js              # All mock data & business logic
+│   └── App.jsx                      # Main app with routing & sidebar
+├── index.html
+├── vite.config.js
+└── tailwind.config.js
+```
+
+**Technologies:**
+- **Framework**: React 18 with Hooks
+- **Build Tool**: Vite 5 (fast HMR, optimized builds)
+- **Styling**: Tailwind CSS 3 (utility-first, responsive)
+- **Charts**: Recharts 2 (responsive, customizable)
+- **Icons**: Lucide React (modern icon set)
+- **Routing**: React Router v6 (client-side routing)
+- **State**: React useState/useEffect (no external state management needed)
+
+**Key Features:**
+- Fully client-side - no backend required
+- Mock data with realistic business scenarios
+- Intelligent response system that understands query intent
+- Planning mode with conversational refinement
+- Expandable/collapsible sections for better UX
+- Smooth animations and transitions
+- Production-ready code structure
+
+### Running the Demo
 
 ```bash
 cd demo
@@ -690,8 +896,20 @@ npm install
 npm run dev
 ```
 
-The demo uses mock data for a fintech product called "PayFlow" to demonstrate realistic PM workflows.
+Open http://localhost:3000 to explore:
+- **Dashboard** (`/`) - View OKRs, metrics, and progress
+- **Chat** (`/chat`) - Ask questions and plan features
 
-**Technologies:** React 18, Vite, Tailwind CSS, Recharts, React Router
+### Try These Interactions
 
-See `demo/README.md` for full details.
+In the chat interface, try:
+- "What's blocking the SSO work?" - See blocker analysis
+- "How are we tracking against Q1 OKRs?" - Get status summary
+- "Let's plan adding Apple Pay support" - Enter planning mode
+- "Split story 2 into smaller pieces" - Refine generated epics
+
+The demo uses realistic mock data for "PayFlow", a fintech payment platform, to demonstrate authentic PM workflows including payment processing, security compliance, and merchant onboarding initiatives.
+
+**Note**: This is a vision demo with pre-scripted responses. A production implementation would integrate with real data sources (Jira, GitHub), use Claude Agent SDK for conversational AI, and include code indexing with semantic search capabilities.
+
+See `demo/README.md` for full implementation details.
