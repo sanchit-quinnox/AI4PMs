@@ -432,484 +432,214 @@ Planning isn't a separate mode - it's a natural extension of the conversation. W
 
 ---
 
-## Why This Matters
+## The Opportunity
 
-### For the PM
+### The Cost of Fragmentation
 
-- **Faster decisions**: Get feasibility answers in minutes, not days
-- **Better visibility**: Always know how execution maps to strategy
-- **Higher quality output**: AI-assisted planning catches gaps early
-- **More time for strategy**: Less time on manual tracking and coordination
+Every day, PMs lose hours to:
+- **Context switching** between strategy docs, Jira boards, and engineering discussions
+- **Manual status tracking** that's outdated the moment it's compiled
+- **Waiting for engineering** to answer "can we build this?" questions
+- **Incomplete planning** that leads to scope creep and rework
 
-### For the Team
+These aren't just inefficiencies—they're barriers to making good decisions quickly.
 
-- **Clearer tickets**: Stories come with context and acceptance criteria
-- **Fewer surprises**: Technical constraints surface during planning, not development
-- **Better alignment**: Everyone can see how their work connects to OKRs
+### What Changes with Nexus
 
-### For the Organization
+**PMs become decision machines:**
+- Answer feasibility questions in real-time during stakeholder meetings
+- Spot at-risk objectives before they become fire drills
+- Generate well-scoped tickets without engineering bottlenecks
+- Stay in strategic mode instead of reactive coordination mode
 
-- **Execution intelligence**: Real-time visibility into strategic progress
-- **Reduced rework**: Better-scoped tickets mean less back-and-forth
-- **Institutional knowledge**: Codebase understanding isn't locked in engineers' heads
+**Engineering gets better inputs:**
+- Tickets that already consider technical constraints
+- Clear connection between their work and business outcomes
+- Less time in meetings explaining "why this is hard"
+- More time building, less time clarifying
+
+**Organizations gain execution intelligence:**
+- Know which strategies are actually being built
+- See where engineering capacity is really going
+- Identify gaps between stated goals and actual work
+- Make data-driven decisions about priorities
+
+### The Bigger Picture
+
+This isn't about replacing PM judgment—it's about removing the friction that slows it down.
+
+When technical feasibility isn't a black box, when strategic progress is always current, and when planning is assisted by AI that understands your codebase, PMs can focus on what they do best: understanding customers, defining strategy, and driving outcomes.
+
+**The result:** Better products, shipped faster, with less organizational overhead.
 
 ---
 
-## System Architecture
+## How It Works
 
-### Production Architecture (Vision)
+Nexus connects to your existing PM ecosystem and uses AI to understand the relationships between strategy, code, and execution:
 
 ```mermaid
 flowchart TB
-    subgraph UserInterface["User Interface"]
-        Dashboard["OKR Progress Dashboard"]
-        Chat["Unified Chat + Planning"]
+    subgraph Sources["Your Existing Tools"]
+        OKRs["OKR Documents<br/>(Strategy)"]
+        Jira["Jira Tickets<br/>(Execution)"]
+        Code["Code Repos<br/>(Technical Reality)"]
+        Miro["Miro Boards<br/>(Plans)"]
+        Analytics["Analytics<br/>(Metrics)"]
     end
 
-    subgraph AgentLayer["Agent Orchestration Layer"]
-        Agent["Claude Agent SDK"]
-        
-        subgraph Skills["Agent Skills"]
-            OKRSkill["OKR Mapper"]
-            FeasibilitySkill["Feasibility Analyzer"]
-            PlannerSkill["Ticket Planner"]
-            IndexerSkill["Context Indexer"]
-        end
+    subgraph Nexus["Nexus AI Layer"]
+        Intelligence["Understands connections<br/>across all sources"]
     end
 
-    subgraph MCPLayer["MCP Server Layer"]
-        JiraMCP["Jira MCP"]
-        MiroMCP["Miro MCP"]
-        DocsMCP["Docs Parser"]
-        CodeMCP["Codebase MCP"]
-        AnalyticsMCP["Analytics MCP"]
+    subgraph Interface["Conversational Interface"]
+        Dashboard["Live OKR Dashboard"]
+        Chat["Ask & Plan"]
     end
 
-    subgraph DataSources["External Data Sources"]
-        Jira[(Jira)]
-        Miro[(Miro)]
-        Docs[(PPT/Docs)]
-        Repos[(Git Repos)]
-        Analytics[(Analytics)]
-    end
-
-    subgraph Storage["Internal Storage"]
-        DB[(PostgreSQL<br/>Projects, Mappings)]
-        VectorDB[(Vector Store<br/>Embeddings)]
-    end
-
-    Dashboard --> Agent
-    Chat --> Agent
-
-    Agent --> Skills
-    Skills --> MCPLayer
-
-    JiraMCP --> Jira
-    MiroMCP --> Miro
-    DocsMCP --> Docs
-    CodeMCP --> Repos
-    AnalyticsMCP --> Analytics
-
-    Agent --> DB
-    Agent --> VectorDB
-    IndexerSkill --> VectorDB
+    Sources --> Nexus
+    Nexus --> Interface
 ```
 
-### Demo Architecture (Current Implementation)
-
-```mermaid
-flowchart LR
-    subgraph Frontend["React Frontend (Demo)"]
-        subgraph Pages["Pages"]
-            DashboardPage["Dashboard Page"]
-            ChatPage["Chat Page"]
-        end
-        
-        subgraph Components["Components"]
-            DashComponents["Dashboard Components<br/>(OKR Cards, Charts, Alerts)"]
-            ChatComponents["Chat Components<br/>(Messages, Epics, Actions)"]
-        end
-        
-        subgraph Data["Mock Data Layer"]
-            MockData["mockData.js<br/>(Objectives, Tickets,<br/>Conversations)"]
-        end
-    end
-    
-    DashboardPage --> DashComponents
-    DashboardPage --> MockData
-    ChatPage --> ChatComponents
-    ChatPage --> MockData
-    
-    style MockData fill:#f9f,stroke:#333,stroke-width:2px
-    style Frontend fill:#e1f5ff,stroke:#333,stroke-width:2px
-```
-
-The demo is a fully client-side React application that simulates the AI capabilities with pre-scripted responses and realistic mock data. It demonstrates the UX and interactions without requiring backend infrastructure.
+The platform ingests information from across your PM workflow, understands the semantic relationships between different artifacts, and provides a single conversational interface to access this unified knowledge.
 
 ---
 
 ## User Flows
 
-### Flow 1: Dashboard Interaction (Demo Implementation)
+### Flow 1: Morning Check-In
 
 ```mermaid
 sequenceDiagram
     actor PM as Product Manager
-    participant UI as Dashboard Page
-    participant Components as Dashboard Components
-    participant Data as Mock Data Layer
+    participant Nexus as Nexus Platform
 
-    PM->>UI: Navigate to Dashboard
-    UI->>Data: Load objectives and tickets
-    Data-->>UI: Return OKRs with progress data
+    PM->>Nexus: Opens dashboard (8:00 AM)
+    Nexus->>Nexus: Syncs latest from Jira, GitHub
+    Nexus-->>PM: Shows OKR progress with real-time updates
     
-    UI->>Components: Render summary metrics
-    Components->>Data: Calculate overall progress
-    Data-->>Components: Return aggregated stats
+    Note over PM: Sees "2 KRs at risk"
     
-    UI->>Components: Render OKR cards
-    Components->>Data: Get KR details
-    Data-->>Components: Return KR with ticket stats
+    PM->>Nexus: Click at-risk KR
+    Nexus-->>PM: Shows blocked tickets with context
     
-    UI->>Components: Render charts (status, velocity)
-    Components->>Data: Get distribution data
-    Data-->>Components: Return chart data
+    PM->>Nexus: Expand blocked ticket details
+    Nexus-->>PM: Shows blocker reason, owner, duration
     
-    PM->>Components: Expand KR card
-    Components->>Components: Toggle expanded state
-    Components-->>PM: Show ticket breakdown
+    Note over PM: Identifies action needed
     
-    Note over PM,Data: All data is pre-loaded mock data,<br/>simulating real-time calculations
+    PM->>PM: Sends Slack to unblock team
+    
+    Note over PM,Nexus: Entire check-in: 3 minutes<br/>(vs 20 minutes manually checking Jira)
 ```
 
-### Flow 2: Chat Interaction (Demo Implementation)
+### Flow 2: Quick Feasibility Check
 
 ```mermaid
 sequenceDiagram
     actor PM as Product Manager
-    participant UI as Chat Page
-    participant Components as Chat Components
-    participant Data as Mock Data Layer
+    participant Nexus as Nexus Platform
+    participant Stakeholder as Stakeholder
 
-    PM->>UI: Navigate to Chat
-    UI->>Data: Load pre-loaded conversation
-    Data-->>UI: Return chat history
+    Stakeholder->>PM: "Can we add SSO by next quarter?"
     
-    UI->>Components: Render messages
-    Components-->>PM: Display conversation
+    PM->>Nexus: "What would SSO implementation involve?"
+    Nexus->>Nexus: Analyzes auth codebase
+    Nexus->>Nexus: Checks similar past work
+    Nexus-->>PM: Detailed breakdown in 30 seconds
     
-    PM->>UI: Type and send message
-    UI->>UI: Add user message to state
-    UI->>Components: Show typing indicator
+    Note over PM: - 4 services affected<br/>- 6 weeks estimated<br/>- No major blockers<br/>- Recommended approach
     
-    UI->>Data: Match query to demo responses
-    Data-->>UI: Return pre-scripted AI response
+    PM->>Stakeholder: "Yes, 6 weeks. I'll have a plan by EOD"
     
-    alt Feasibility Query
-        UI->>Components: Render feasibility analysis
-        Components-->>PM: Show affected components & estimates
-    else Status Query
-        UI->>Components: Render status breakdown
-        Components-->>PM: Show blockers & progress
-    else Planning Request
-        UI->>Components: Enter planning mode
-        Components->>Components: Show planning badge
-        Components-->>PM: Ask clarifying questions
-        PM->>UI: Respond to questions
-        UI->>Components: Generate epic card
-        Components-->>PM: Display epic with stories
-    end
-    
-    Note over PM,Data: Responses are pre-scripted but<br/>simulate real AI behavior
+    Note over PM,Stakeholder: Decision made in minutes,<br/>not days of engineering meetings
 ```
 
-### Flow 3: Planning Mode (Demo Implementation)
+### Flow 3: Feature Planning Session
 
 ```mermaid
 sequenceDiagram
     actor PM as Product Manager
-    participant UI as Chat Page
-    participant Components as Chat Components
-    participant Data as Mock Data Layer
+    participant Nexus as Nexus Platform
+    participant Jira as Jira
 
-    PM->>UI: Type "Let's plan [feature]"
-    UI->>UI: Detect planning intent
-    UI->>Components: Show planning mode badge
-    Components-->>PM: Display status: "Gathering requirements"
+    PM->>Nexus: "Let's plan multi-currency support"
+    Nexus->>Nexus: Analyzes payment service code
+    Nexus-->>PM: "Which currencies for MVP?"
     
-    loop Clarification Questions
-        UI->>Data: Get next question
-        Data-->>UI: Return question with context
-        UI->>Components: Render question card
-        Components-->>PM: Show question
-        
-        PM->>UI: Answer question (text input)
-        UI->>UI: Store answer
-        UI->>Components: Update planning status
-    end
+    PM->>Nexus: "EUR and GBP to start"
+    Nexus-->>PM: "Account-level default or per-transaction?"
     
-    UI->>Components: Update status: "Generating"
-    UI->>Data: Get epic structure
-    Data-->>UI: Return epic with stories
+    PM->>Nexus: "Account default with per-transaction override"
     
-    UI->>Components: Render epic card
-    Components-->>PM: Display expandable epic
-    Components->>Components: Show action buttons
+    Nexus->>Nexus: Generates epic structure
+    Nexus-->>PM: Shows 4 stories, 21 points
     
-    alt Split Story
-        PM->>UI: Request story split
-        UI->>Data: Get split stories
-        Data-->>UI: Return refined structure
-        UI->>Components: Update epic card
-    else Export to Jira
-        PM->>UI: Click export button
-        UI->>Components: Simulate Jira export
-        Components->>Components: Show success animation
-        Components-->>PM: Display ticket IDs
-    else Refine
-        PM->>UI: Request refinement
-        UI->>Components: Show refinement dialog
-    end
+    Note over PM: Reviews breakdown:<br/>- Merchant config (5pts)<br/>- Stripe integration (8pts)<br/>- Checkout UI (5pts)<br/>- Reporting (3pts)
     
-    Note over PM,Data: Planning flow is conversational<br/>with natural language refinement
+    PM->>Nexus: "Story 2 seems big, split it"
+    Nexus-->>PM: Splits into 5pt + 3pt stories
+    
+    PM->>Nexus: "Export to Jira"
+    Nexus->>Jira: Creates 5 tickets
+    Nexus-->>PM: Shows ticket links
+    
+    Note over PM,Nexus: Complete planning: 10 minutes<br/>(vs 1-2 hours manual breakdown)
 ```
 
 ---
 
-## Data Flow Overview
+## The Impact
 
-### Production Data Flow (Vision)
+### Time Savings
 
-```mermaid
-flowchart LR
-    subgraph Inputs["Data Inputs"]
-        OKRs["OKR Documents"]
-        Plans["Miro Plans"]
-        Tickets["Jira Tickets"]
-        Code["Code Repos"]
-        Stats["Usage Analytics"]
-    end
+**Before Nexus:**
+- Daily standup context gathering: 20-30 minutes
+- Feasibility research for feature requests: 2-3 days
+- Epic/story breakdown: 1-2 hours per feature
+- OKR progress tracking: 1-2 hours weekly
 
-    subgraph Intelligence["AI Intelligence Layer"]
-        Parse["Parse & Extract"]
-        Index["Index & Embed"]
-        Map["Map & Connect"]
-        Reason["Reason & Respond"]
-    end
+**With Nexus:**
+- Morning check-in: 3-5 minutes
+- Feasibility answer: 30 seconds to 2 minutes
+- Feature planning: 10-15 minutes
+- OKR tracking: Real-time, always current
 
-    subgraph Outputs["PM Outputs"]
-        Visibility["Strategic Visibility<br/>(Dashboard)"]
-        Answers["Technical Answers<br/>(Chat)"]
-        TicketsOut["Structured Tickets<br/>(Planning)"]
-    end
+**Net Result:** ~8-10 hours saved per week per PM
 
-    OKRs --> Parse
-    Plans --> Parse
-    Tickets --> Index
-    Code --> Index
-    Stats --> Index
+### Decision Quality
 
-    Parse --> Map
-    Index --> Map
-    Map --> Reason
+- **Grounded in reality**: Technical estimates based on actual code, not guesses
+- **Complete picture**: See connections between strategy and execution automatically
+- **Early risk detection**: Know about blockers before they become critical
+- **Better scoping**: AI helps identify edge cases and dependencies
 
-    Reason --> Visibility
-    Reason --> Answers
-    Reason --> TicketsOut
-```
+### Strategic Focus
 
-### Demo Data Flow (Current Implementation)
+By removing execution friction, PMs can spend more time on:
+- Customer discovery and validation
+- Market analysis and competitive research
+- Product strategy and roadmap planning
+- Stakeholder alignment and communication
 
-```mermaid
-flowchart LR
-    subgraph MockData["Mock Data (mockData.js)"]
-        Objectives["3 Objectives<br/>8 Key Results"]
-        Tickets["40+ Tickets<br/>with Stats"]
-        Conversations["Pre-scripted<br/>Chat Responses"]
-        Metrics["Velocity Data<br/>Risk Alerts"]
-    end
-
-    subgraph UI["React UI"]
-        Dashboard["Dashboard<br/>Components"]
-        Chat["Chat<br/>Components"]
-    end
-
-    subgraph Display["User Display"]
-        DashView["OKR Progress<br/>Charts & Alerts"]
-        ChatView["Conversational<br/>AI Responses"]
-    end
-
-    Objectives --> Dashboard
-    Tickets --> Dashboard
-    Metrics --> Dashboard
-    
-    Conversations --> Chat
-    Objectives --> Chat
-    Tickets --> Chat
-    
-    Dashboard --> DashView
-    Chat --> ChatView
-    
-    style MockData fill:#ffe1ff,stroke:#333,stroke-width:2px
-```
+**The goal**: Let PMs be strategists, not project coordinators.
 
 ---
 
-## Technical Foundation
+## Experience the Vision
 
-### Production System (Vision)
+An interactive demo has been built to showcase Nexus in action. The demo simulates the complete experience using realistic data from "PayFlow", a fintech payment platform.
 
-The production system integrates three types of intelligence:
+### What You Can Explore
 
-**1. Document Understanding**
+**OKR Dashboard**
+- See real-time progress across 3 objectives and 8 key results
+- View visual analytics with charts and trends
+- Drill down into blocked work and at-risk initiatives
+- Understand how 40+ tickets map to strategic goals
 
-OKRs, plans, and roadmaps are parsed and semantically indexed. The AI understands not just what the text says, but what it means in context.
-
-**2. Code Intelligence**
-
-Repositories are indexed with both structural analysis (AST parsing) and semantic embeddings. The AI can answer questions like "what calls this function" and "how complex would this change be."
-
-**3. Execution State**
-
-Jira (and similar tools) provide the real-time state of work. The AI maintains mappings between tickets and strategic objectives, updating as work progresses.
-
-These three layers are unified through a conversational agent that can reason across all contexts simultaneously.
-
-### Demo Implementation (Current)
-
-The demo simulates this intelligence layer with:
-
-**1. Realistic Mock Data** (`src/data/mockData.js`)
-- 3 objectives with 8 key results for Q1 2025
-- 40+ tickets with realistic stats (done, in-progress, blocked, not started)
-- Sprint velocity trends and risk alerts
-- Pre-scripted chat conversations demonstrating key interactions
-
-**2. Smart Response Matching**
-- Pattern matching on user queries to detect intent
-- Different response types: feasibility, status, planning
-- Context-aware responses that reference actual mock data
-- Planning mode that transitions naturally from conversation
-
-**3. Interactive UI Components**
-- Expandable OKR cards with drill-down capabilities
-- Real-time chart updates using Recharts
-- Chat messages with rich formatting (code blocks, epic cards, action buttons)
-- Planning mode with status badges and question cards
-- Export simulation with success confirmations
-
-The demo provides a high-fidelity simulation of the AI experience without requiring backend infrastructure, making it perfect for demonstrations and user testing.
-
----
-
-## Interactive Demo
-
-A fully working demo application has been built to showcase these concepts in action. The demo is a modern, responsive React application with a polished UI that simulates the complete Nexus experience.
-
-### What's Included
-
-**1. OKR Dashboard**
-- Real-time progress tracking for 3 objectives and 8 key results
-- Interactive summary metrics showing overall progress, at-risk items, and blockers
-- Visual analytics with status distribution pie charts and sprint velocity trends
-- Expandable key result cards with ticket breakdowns and risk indicators
-- Risk alerts panel highlighting blocked tickets and at-risk objectives
-- 40+ mock tickets across multiple epics with realistic data
-
-**2. Unified Chat Interface**
-- Conversational UI with natural language interaction
-- Pre-loaded example conversations demonstrating:
-  - Feasibility analysis (e.g., "Can we add multi-currency support?")
-  - Status queries (e.g., "What's blocking the SSO work?")
-  - Interactive planning mode with AI-guided questions
-- Code-aware responses showing affected components and effort estimates
-- Inline epic generation with expandable story cards
-- Action buttons for exporting to Jira, refining plans, and linking to OKRs
-- Export confirmation UI with ticket links
-- Planning mode indicators with status badges
-- Smart response system that reacts to different types of queries
-
-**3. Modern UI/UX**
-- Dark theme with gradient accents and smooth transitions
-- Responsive design that works on desktop and mobile
-- Sidebar navigation with project context and connected sources
-- Real-time sync status indicator
-- Loading states and typing indicators for realistic AI interaction
-- Syntax-highlighted code blocks in chat responses
-- Interactive charts using Recharts library
-
-### Technical Implementation
-
-**Architecture:**
-```
-demo/
-├── src/
-│   ├── components/
-│   │   ├── Dashboard/
-│   │   │   ├── OKRCard.jsx          # Expandable objective/KR cards
-│   │   │   ├── StatusChart.jsx      # Pie chart for ticket distribution
-│   │   │   ├── VelocityTrend.jsx    # Sprint velocity line chart
-│   │   │   ├── RiskAlerts.jsx       # Blocked tickets & risks panel
-│   │   │   └── ProgressRing.jsx     # Circular progress indicator
-│   │   ├── Chat/
-│   │   │   ├── ChatWindow.jsx       # Main chat container
-│   │   │   ├── Message.jsx          # Message renderer (handles all types)
-│   │   │   ├── EpicCard.jsx         # Inline epic/story display
-│   │   │   ├── ActionButtons.jsx    # Export, Refine, Link actions
-│   │   │   ├── ExportResult.jsx     # Jira export confirmation
-│   │   │   └── CodeBlock.jsx        # Syntax highlighted code
-│   │   └── Planning/                # Planning mode components
-│   ├── pages/
-│   │   ├── DashboardPage.jsx        # Dashboard view
-│   │   └── ChatPage.jsx             # Chat + Planning view
-│   ├── data/
-│   │   └── mockData.js              # All mock data & business logic
-│   └── App.jsx                      # Main app with routing & sidebar
-├── index.html
-├── vite.config.js
-└── tailwind.config.js
-```
-
-**Technologies:**
-- **Framework**: React 18 with Hooks
-- **Build Tool**: Vite 5 (fast HMR, optimized builds)
-- **Styling**: Tailwind CSS 3 (utility-first, responsive)
-- **Charts**: Recharts 2 (responsive, customizable)
-- **Icons**: Lucide React (modern icon set)
-- **Routing**: React Router v6 (client-side routing)
-- **State**: React useState/useEffect (no external state management needed)
-
-**Key Features:**
-- Fully client-side - no backend required
-- Mock data with realistic business scenarios
-- Intelligent response system that understands query intent
-- Planning mode with conversational refinement
-- Expandable/collapsible sections for better UX
-- Smooth animations and transitions
-- Production-ready code structure
-
-### Running the Demo
-
-```bash
-cd demo
-npm install
-npm run dev
-```
-
-Open http://localhost:3000 to explore:
-- **Dashboard** (`/`) - View OKRs, metrics, and progress
-- **Chat** (`/chat`) - Ask questions and plan features
-
-### Try These Interactions
-
-In the chat interface, try:
-- "What's blocking the SSO work?" - See blocker analysis
-- "How are we tracking against Q1 OKRs?" - Get status summary
-- "Let's plan adding Apple Pay support" - Enter planning mode
-- "Split story 2 into smaller pieces" - Refine generated epics
-
-The demo uses realistic mock data for "PayFlow", a fintech payment platform, to demonstrate authentic PM workflows including payment processing, security compliance, and merchant onboarding initiatives.
-
-**Note**: This is a vision demo with pre-scripted responses. A production implementation would integrate with real data sources (Jira, GitHub), use Claude Agent SDK for conversational AI, and include code indexing with semantic search capabilities.
-
-See `demo/README.md` for full implementation details.
+**Conversational Interface**
+- Ask about feasibility: "Can we add multi-currency support?"
+- Check on status: "What's blocking the SSO work?"
+- Plan new features: "Let's plan adding Apple Pay support"
+- Refine plans conversationally: "Split that story into smaller pieces"
