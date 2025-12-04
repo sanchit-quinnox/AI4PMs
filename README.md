@@ -119,13 +119,9 @@ This is currently a vision/demo project. If you're interested in building this:
 2. Run the demo to understand the UX
 3. Consider which components to prototype first
 
-## License
-
-TBD
-
 ## Contact
 
-For questions or collaboration inquiries, please reach out.
+For questions or collaboration inquiries, please open an issue or reach out via GitHub.
 
 ---
 
