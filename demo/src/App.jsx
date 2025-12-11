@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, RefreshCw, Network } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, RefreshCw, Network, Map } from 'lucide-react';
 import DashboardPage from './pages/DashboardPage';
 import ChatPage from './pages/ChatPage';
+import RoadmapPage from './pages/RoadmapPage';
 import { project } from './data/mockData';
 
 function App() {
@@ -43,6 +44,20 @@ function App() {
               >
                 <LayoutDashboard size={20} />
                 <span className="font-medium">Dashboard</span>
+              </NavLink>
+              
+              <NavLink
+                to="/roadmap"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-300 hover:bg-gray-800'
+                  }`
+                }
+              >
+                <Map size={20} />
+                <span className="font-medium">Roadmap</span>
               </NavLink>
               
               <NavLink
@@ -91,6 +106,7 @@ function App() {
         <main className="flex-1 overflow-auto">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/roadmap" element={<RoadmapPage />} />
             <Route path="/chat" element={<ChatPage />} />
           </Routes>
         </main>

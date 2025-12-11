@@ -161,6 +161,188 @@ export const velocityData = [
   { sprint: "Sprint 24", completed: 42, planned: 58 }
 ];
 
+// Roadmap data
+export const releases = [
+  {
+    id: "rel-1",
+    name: "Q4 2024",
+    startDate: "2024-10-01",
+    endDate: "2024-12-31",
+    status: "current",
+    description: "Focus on payment reliability and initial compliance work"
+  },
+  {
+    id: "rel-2",
+    name: "Q1 2025",
+    startDate: "2025-01-01",
+    endDate: "2025-03-31",
+    status: "planned",
+    description: "Enterprise features and onboarding optimization"
+  },
+  {
+    id: "rel-3",
+    name: "Q2 2025",
+    startDate: "2025-04-01",
+    endDate: "2025-06-30",
+    status: "future",
+    description: "Global expansion and advanced capabilities"
+  },
+  {
+    id: "rel-4",
+    name: "Q3 2025",
+    startDate: "2025-07-01",
+    endDate: "2025-09-30",
+    status: "future",
+    description: "Innovation and platform extensibility"
+  }
+];
+
+export const roadmapFeatures = [
+  {
+    id: "feat-1",
+    title: "Payment Reliability Suite",
+    description: "Comprehensive improvements to payment success rates including retry logic, circuit breakers, and intelligent routing",
+    status: "in-progress",
+    priority: "high",
+    releaseId: "rel-1",
+    linkedOKRs: ["kr-1-1", "kr-1-2"],
+    linkedEpics: ["Payment Reliability"],
+    owner: "Sarah Chen",
+    targetQuarter: "Q4 2024",
+    confidence: "high"
+  },
+  {
+    id: "feat-2",
+    title: "SOC 2 Type II Certification",
+    description: "Complete security compliance certification including audit logging, encryption, and access controls",
+    status: "in-progress",
+    priority: "high",
+    releaseId: "rel-1",
+    linkedOKRs: ["kr-2-1"],
+    linkedEpics: ["SOC 2 Compliance"],
+    owner: "Jennifer Lee",
+    targetQuarter: "Q1 2025",
+    confidence: "medium"
+  },
+  {
+    id: "feat-3",
+    title: "Enterprise SSO",
+    description: "SAML 2.0 based single sign-on for enterprise customers with JIT provisioning",
+    status: "in-progress",
+    priority: "high",
+    releaseId: "rel-2",
+    linkedOKRs: ["kr-2-2"],
+    linkedEpics: ["Enterprise SSO"],
+    owner: "Marcus Johnson",
+    targetQuarter: "Q1 2025",
+    confidence: "medium"
+  },
+  {
+    id: "feat-4",
+    title: "Streamlined Merchant Onboarding",
+    description: "Reduce onboarding friction with progressive KYC, instant verification, and data pre-population",
+    status: "in-progress",
+    priority: "medium",
+    releaseId: "rel-1",
+    linkedOKRs: ["kr-3-1"],
+    linkedEpics: ["Merchant Onboarding"],
+    owner: "Lisa Wang",
+    targetQuarter: "Q4 2024",
+    confidence: "high"
+  },
+  {
+    id: "feat-5",
+    title: "Multi-Currency Support",
+    description: "Enable international payments with EUR and GBP support, currency selection, and multi-currency reporting",
+    status: "planned",
+    priority: "high",
+    releaseId: "rel-2",
+    linkedOKRs: ["kr-3-1"],
+    linkedEpics: [],
+    owner: "Alex Kumar",
+    targetQuarter: "Q1 2025",
+    confidence: "high"
+  },
+  {
+    id: "feat-6",
+    title: "Self-Service Onboarding Portal",
+    description: "No-code merchant onboarding with embedded KYC, automated underwriting, and instant activation",
+    status: "planned",
+    priority: "medium",
+    releaseId: "rel-2",
+    linkedOKRs: ["kr-3-2", "kr-3-3"],
+    linkedEpics: ["Activation Optimization"],
+    owner: "Tom Rodriguez",
+    targetQuarter: "Q1 2025",
+    confidence: "medium"
+  },
+  {
+    id: "feat-7",
+    title: "Advanced Fraud Detection",
+    description: "ML-powered fraud prevention with real-time risk scoring and automated decision engine",
+    status: "discovery",
+    priority: "high",
+    releaseId: "rel-2",
+    linkedOKRs: ["kr-1-1"],
+    linkedEpics: [],
+    owner: "Marcus Johnson",
+    targetQuarter: "Q2 2025",
+    confidence: "low"
+  },
+  {
+    id: "feat-8",
+    title: "Mobile SDK (iOS & Android)",
+    description: "Native mobile SDKs for seamless in-app payment integration",
+    status: "discovery",
+    priority: "medium",
+    releaseId: "rel-3",
+    linkedOKRs: [],
+    linkedEpics: [],
+    owner: null,
+    targetQuarter: "Q2 2025",
+    confidence: "low"
+  },
+  {
+    id: "feat-9",
+    title: "Advanced Analytics Dashboard",
+    description: "Real-time business intelligence with customizable reports, cohort analysis, and forecasting",
+    status: "discovery",
+    priority: "low",
+    releaseId: "rel-3",
+    linkedOKRs: [],
+    linkedEpics: [],
+    owner: "Emma Davis",
+    targetQuarter: "Q2 2025",
+    confidence: "medium"
+  },
+  {
+    id: "feat-10",
+    title: "API Marketplace & Extensions",
+    description: "Developer platform with public APIs, webhooks, and third-party integrations",
+    status: "discovery",
+    priority: "low",
+    releaseId: "rel-4",
+    linkedOKRs: [],
+    linkedEpics: [],
+    owner: null,
+    targetQuarter: "Q3 2025",
+    confidence: "low"
+  }
+];
+
+// Helper functions for roadmap
+export const getRoadmapFeaturesByStatus = (status) => {
+  return roadmapFeatures.filter(f => f.status === status);
+};
+
+export const getRoadmapFeaturesByRelease = (releaseId) => {
+  return roadmapFeatures.filter(f => f.releaseId === releaseId);
+};
+
+export const getRoadmapFeaturesByPriority = (priority) => {
+  return roadmapFeatures.filter(f => f.priority === priority);
+};
+
 // Unified chat with planning - simulates a natural conversation flow
 export const chatConversation = [
   {
